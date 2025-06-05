@@ -2,19 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Tic Tac Toe</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Neon Tic Tac Toe</title>
   <link rel="stylesheet" href="tictactoe.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
-    <h1>Tic Tac Toe 🔮</h1>
+    <h1>Tic Tac Toe</h1>
     <div class="scoreboard">
-      <div>X Wins: <span id="x-score">0</span></div>
-      <div>O Wins: <span id="o-score">0</span></div>
-      <div>Draws: <span id="draw-score">0</span></div>
+      <p><span id="x-score">0</span> - <span id="o-score">0</span></p>
     </div>
-    <div id="status">Player X's turn</div>
     <div class="board" id="board">
       <div class="cell" data-index="0"></div>
       <div class="cell" data-index="1"></div>
@@ -25,18 +23,11 @@
       <div class="cell" data-index="6"></div>
       <div class="cell" data-index="7"></div>
       <div class="cell" data-index="8"></div>
+      <div id="win-line"></div>
     </div>
-    <button id="restartBtn">Play Again 🔁</button>
+    <p id="message"></p>
+    <button id="restart">Play Again 🔁</button>
   </div>
-
- 
-  <div id="popup" class="popup">
-    <div class="popup-content">
-      <span id="popup-message"></span>
-      <button onclick="closePopup()">OK</button>
-    </div>
-  </div>
-
   <script src="tictactoe.js"></script>
 </body>
 </html>
