@@ -1,101 +1,123 @@
 const cells = document.querySelectorAll('.cell');
-const statusText = document.getElementById('status');
-const restartBtn = document.getElementById('restartBtn');
-const xScore = document.getElementById('x-score');
-const oScore = document.getElementById('o-score');
-const drawScore = document.getElementById('draw-score');
-const popup = document.getElementById('popup');
-const popupMessage = document.getElementById('popup-message');
+const message = document.getElementById('message');
+const restartBtn = document.getElementById('restart');
+const xScoreEl = document.getElementById('x-score');
+const oScoreEl = document.getElementById('o-score');
+const winLine = document.getElementById('win-line');
 
-let currentPlayer = 'X';
-let board = Array(9).fill('');
+let board = ["", "", "", "", "", "", "", "", ""];
+let currentPlayer = "X";
+let xScore = 0;
+let oScore = 0;
 let gameActive = true;
-let scores = { X: 0, O: 0, D: 0 };
 
-const winningCombos = [
-  [0,1,2], [3,4,5], [6,7,8],
-  [0,3,6], [1,4,7], [2,5,8],
-  [0,4,8], [2,4,6]
+const winCombos = [
+  [0,1,2], [3,4,5], [6,7,8], // Rows
+  [0,3,6], [1,4,7], [2,5,8], // Columns
+  [0,4,8], [2,4,6]           // Diagonals
 ];
 
-function updateStatus(message) {
-  statusText.textContent = message;
-}
+cells.forEach(cell => {
+  cell.addEventListener('click', handleCellClick);
+});
 
-function showPopup(message) {
-  popupMessage.textContent = message;
-  popup.style.display = 'flex';
-}
-
-function closePopup() {
-  popup.style.display = 'none';
-}
-
-function checkWinner() {
-  for (let combo of winningCombos) {
-    const [a, b, c] = combo;
-    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      gameActive = false;
-      showPopup(`🎉 Player ${board[a]} Wins!`);
-      scores[board[a]]++;
-      updateScore();
-      return;
-    }
-  }
-
-  if (!board.includes('')) {
-    gameActive = false;
-    showPopup("🤝 It's a Draw!");
-    scores.D++;
-    updateScore();
-  }
-}
-
-function updateScore() {
-  xScore.textContent = scores.X;
-  oScore.textContent = scores.O;
-  drawScore.textContent = scores.D;
-}
+restartBtn.addEventListener('click', () => {
+  restartBtn.disabled = true;
+  restartBtn.innerText = "Resetting...";
+  setTimeout(() => {
+    restartGame();
+    restartBtn.disabled = false;
+    restartBtn.innerText = "Play Again 🔁";
+  }, 1200);
+});
 
 function handleCellClick(e) {
   const index = e.target.dataset.index;
-
-  if (board[index] !== '' || !gameActive) return;
+  if (board[index] || !gameActive) return;
 
   board[index] = currentPlayer;
+  e.target.classList.add(currentPlayer.toLowerCase());
   e.target.textContent = currentPlayer;
-  e.target.classList.add(currentPlayer);
 
-  checkWinner();
+  if (checkWin()) {
+    gameActive = false;
+    message.textContent = `${currentPlayer} wins!`;
+    updateScore(currentPlayer);
+  } else if (!board.includes("")) {
+    message.textContent = "It's a draw!";
+    gameActive = false;
+  } else {
+    currentPlayer = currentPlayer === "X" ? "O" : "X";
+    message.textContent = `Turn: ${currentPlayer}`;
+  }
+}
 
-  if (gameActive) {
-    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-    updateStatus(`Player ${currentPlayer}'s turn`);
+function checkWin() {
+  for (let combo of winCombos) {
+    const [a, b, c] = combo;
+    if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+      highlightWinningCells(combo);
+      return true;
+    }
+  }
+  return false;
+}
+
+function highlightWinningCells(combo) {
+  combo.forEach(index => {
+    cells[index].classList.add('win');
+  });
+  drawWinLine(combo);
+}
+
+function drawWinLine(combo) {
+  const positions = {
+    0: [0, 0],
+    1: [1, 0],
+    2: [2, 0],
+    3: [0, 1],
+    4: [1, 1],
+    5: [2, 1],
+    6: [0, 2],
+    7: [1, 2],
+    8: [2, 2]
+  };
+
+  const [startIdx, , endIdx] = combo;
+  const [startX, startY] = positions[startIdx];
+  const [endX, endY] = positions[endIdx];
+
+  const deltaX = endX - startX;
+  const deltaY = endY - startY;
+  const angle = Math.atan2(deltaY, deltaX) * 180 / Math.PI;
+
+  const cellSize = window.innerWidth < 600 ? 80 : 100;
+  const offsetX = startX * (cellSize + 10) + cellSize / 2;
+  const offsetY = startY * (cellSize + 10) + cellSize / 2;
+
+  winLine.style.left = `${offsetX}px`;
+  winLine.style.top = `${offsetY}px`;
+  winLine.style.transform = `rotate(${angle}deg) scaleX(1)`;
+}
+
+function updateScore(player) {
+  if (player === "X") {
+    xScore++;
+    xScoreEl.textContent = xScore;
+  } else {
+    oScore++;
+    oScoreEl.textContent = oScore;
   }
 }
 
 function restartGame() {
-  updateStatus("🔄 Restarting game...");
-  restartBtn.disabled = true;
-  restartBtn.textContent = "Resetting...";
-
-  setTimeout(() => {
-    board = Array(9).fill('');
-    cells.forEach(cell => {
-      cell.textContent = '';
-      cell.classList.remove('X', 'O');
-    });
-    currentPlayer = 'X';
-    gameActive = true;
-    updateStatus("Player X's turn");
-    closePopup();
-
-    restartBtn.disabled = false;
-    restartBtn.textContent = "Play Again 🔁";
-  }, 2000); // 2-second delay
+  board = ["", "", "", "", "", "", "", "", ""];
+  gameActive = true;
+  currentPlayer = "X";
+  message.textContent = "Turn: X";
+  winLine.style.transform = 'scaleX(0)';
+  cells.forEach(cell => {
+    cell.textContent = "";
+    cell.className = "cell";
+  });
 }
-
-cells.forEach(cell => cell.addEventListener('click', handleCellClick));
-restartBtn.addEventListener('click', restartGame);
-
-updateStatus("Player X's turn");
