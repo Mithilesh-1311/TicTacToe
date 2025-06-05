@@ -1,5 +1,6 @@
 body {
-  background-color: black;
+  background: url('https://img.freepik.com/premium-vector/tic-tac-toe-game-linear-outline-icon-colour-neon-style-brick-wall-background-light-icon_549897-1770.jpg') no-repeat center center fixed;
+  background-size: cover;
   color: white;
   font-family: 'Orbitron', sans-serif;
   text-align: center;
@@ -8,7 +9,11 @@ body {
 }
 
 .container {
+  background-color: rgba(0, 0, 0, 0.65);
   padding: 20px;
+  margin-top: 30px;
+  border-radius: 12px;
+  display: inline-block;
 }
 
 h1 {
@@ -26,7 +31,7 @@ h1 {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(3, 100px);
+  grid-template-columns: repeat(3, 120px);
   gap: 10px;
   justify-content: center;
   margin: 0 auto;
@@ -34,10 +39,9 @@ h1 {
 }
 
 .cell {
-  width: 100px;
-  height: 100px;
-  font-size: 3.5rem;
-  color: white;
+  width: 120px;
+  height: 120px;
+  font-size: 5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,16 +49,21 @@ h1 {
   border: 2px solid #39ff14;
   box-shadow: 0 0 10px #39ff14;
   cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.cell:hover {
+  transform: scale(1.05);
 }
 
 .cell.x {
   color: #ff073a;
-  text-shadow: 0 0 10px #ff073a;
+  text-shadow: 0 0 12px #ff073a;
 }
 
 .cell.o {
   color: #00bfff;
-  text-shadow: 0 0 10px #00bfff;
+  text-shadow: 0 0 12px #00bfff;
 }
 
 .cell.win {
@@ -84,38 +93,39 @@ button#restart {
   border-radius: 8px;
   box-shadow: 0 0 10px #ff00cc, 0 0 20px #3333ff;
   cursor: pointer;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background 0.5s ease;
 }
 
 button#restart:hover {
   transform: scale(1.1);
+  background: linear-gradient(45deg, #ff66cc, #6666ff);
 }
 
 #win-line {
   position: absolute;
-  width: 300px;
-  height: 4px;
+  height: 6px;
   background-color: lime;
   box-shadow: 0 0 10px lime;
   border-radius: 5px;
   transform-origin: left center;
   transform: scaleX(0);
-  transition: transform 0.5s ease-in-out;
+  transition: transform 0.4s ease-in-out;
   z-index: 2;
+  pointer-events: none;
 }
 
 @media (max-width: 600px) {
   .board {
-    grid-template-columns: repeat(3, 80px);
+    grid-template-columns: repeat(3, 90px);
   }
 
   .cell {
-    width: 80px;
-    height: 80px;
-    font-size: 3rem;
+    width: 90px;
+    height: 90px;
+    font-size: 3.5rem;
   }
 
   #win-line {
-    width: 240px;
+    height: 5px;
   }
 }
